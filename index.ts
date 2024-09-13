@@ -2,8 +2,12 @@ import express, { Express, Request, Response} from "express";
 const app: Express = express();
 const port: number | string = process.env.PORT || 3000;
 
+app.set('views', './views')
+app.set('view engine', 'pug');
+
+
 app.get("/topics", (req: Request, res: Response) => {
-  res.send("Chu de bai hat");
+  res.render("client/pages/topics/index");
 });
 
 app.listen(port, () => {
