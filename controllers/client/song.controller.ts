@@ -112,27 +112,31 @@ export const like = async (req: Request, res: Response) => {
 
 // [PATCH] /songs/favorite
 export const favorite = async (req: Request, res: Response) => {
-  const { id } = req.body;
+  try{
+    const { id } = req.body;
 
-  const data = {
-    // userId: res.locals.user.id,
-    songId: id
-  };
-
-  const existSongInFavorite = await FavoriteSong.findOne(data);
-
-  let status = "";
-
-  if(existSongInFavorite) {
-    await FavoriteSong.deleteOne(data);
-  } else {
-    const record = new FavoriteSong(data);
-    await record.save();
-    status = "add";
+    const data = {
+      // userId: res.locals.user.id,
+      songId: id
+    };
+  
+    const existSongInFavorite = await FavoriteSong.findOne(data);
+  
+    let status = "";
+  
+    if(existSongInFavorite) {
+      await FavoriteSong.deleteOne(data);
+    } else {
+      const record = new FavoriteSong(data);
+      await record.save();
+      status = "add";
+    }
+  
+    res.json({
+      code: 200,
+      status: status
+    });
+  } catch(e){
+    res.redirect("back");
   }
-
-  res.json({
-    code: 200,
-    status: status
-  });
 };

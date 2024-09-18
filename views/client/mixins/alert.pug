@@ -1,0 +1,11 @@
+mixin alert(time)
+  - if (messages.success)
+    div(
+      class="alert alert-success show-alert"
+      show-alert=time
+    ) #{messages.success}
+  - else if (messages.error)
+    div(
+      class="alert alert-danger show-alert"
+      show-alert=time
+    ) #{messages.error}
