@@ -11,7 +11,18 @@ connectDatabase();
 const app: Express = express();
 const port: number | string = process.env.PORT || 3000;
 
+// Flash
+import session from 'express-session';
+import flash from 'express-flash';
 
+app.use(session({ 
+  secret: 'keyboard cat', 
+  resave: false, 
+  saveUninitialized: true,
+  cookie: { maxAge: 60000 } 
+}));
+app.use(flash());
+// End flash
 
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());

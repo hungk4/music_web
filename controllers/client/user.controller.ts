@@ -31,7 +31,8 @@ export const registerPost = async (req: Request, res: Response) => {
     });
   
     if(existUser){
-      res.send("da ton tai tai khoan");
+      req.flash("error", "Email đã tồn tại");
+      res.redirect("back");
       return;
     }
   
@@ -45,7 +46,9 @@ export const registerPost = async (req: Request, res: Response) => {
     const user = new User(data);
     await user.save();
     
-    res.redirect("back");
+    res.cookie("token", user.token);
+    req.flash("success", "Đăng kí tài khoản thành công");
+    res.redirect("/topics");
   } catch(e){
     res.redirect("back");
   }
