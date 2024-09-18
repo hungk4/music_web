@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Topic from "../../models/topic.model";
 import Song from "../../models/song.model";
 import Singer from "../../models/singer.model";
+import exp from "constants";
 
 // [GET] /songs/:slugTopic
 export const list = async (req: Request, res: Response) => {
@@ -63,6 +64,37 @@ export const detail = async (req: Request, res: Response) => {
       song: song,
       topic: topic,
       singer: singer
+    })
+  } catch(e){
+    res.redirect("back");
+  }
+}
+
+// [PATCH] /songs/like
+export const like = async (req: Request, res: Response) => {
+  try{
+    const { songId, type } = req.body;
+    const song = await Song.findOne({
+      _id: songId,
+      deleted: false
+    })
+    let like = parseInt(`${song.like}`);
+    if(type === 'like'){
+      like += 1;
+    } else {
+      like -=1 ;
+    };
+    await Song.updateOne({
+      _id: songId,
+      deleted: false
+    }, {
+      like: like
+    });
+
+    res.json({
+      code: 200,
+      updateLike: like,
+      message: "Cập nhật thành công!"
     })
   } catch(e){
     res.redirect("back");
