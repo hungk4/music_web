@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const favoriteSongSchema = new mongoose.Schema(
   {
     userId: String,
-    songId: [String]
+    songId: String
   },
   {
     timestamps: true,

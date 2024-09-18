@@ -3,6 +3,7 @@ import Topic from "../../models/topic.model";
 import Song from "../../models/song.model";
 import Singer from "../../models/singer.model";
 import exp from "constants";
+import FavoriteSong from "../../models/favorite-song.model";
 
 // [GET] /songs/:slugTopic
 export const list = async (req: Request, res: Response) => {
@@ -59,6 +60,14 @@ export const detail = async (req: Request, res: Response) => {
       deleted: false
     }).select("title")
 
+    const existSongInFavorite = await FavoriteSong.findOne({
+      // userId: res.locals.user.id,
+      songId: song.id
+    });
+    if(existSongInFavorite){
+      song["isFavorite"] = true;
+    }
+
     res.render("client/pages/songs/detail.pug", {
       pageTitle: "Chi tiết bài hát",
       song: song,
@@ -100,3 +109,30 @@ export const like = async (req: Request, res: Response) => {
     res.redirect("back");
   }
 }
+
+// [PATCH] /songs/favorite
+export const favorite = async (req: Request, res: Response) => {
+  const { id } = req.body;
+
+  const data = {
+    // userId: res.locals.user.id,
+    songId: id
+  };
+
+  const existSongInFavorite = await FavoriteSong.findOne(data);
+
+  let status = "";
+
+  if(existSongInFavorite) {
+    await FavoriteSong.deleteOne(data);
+  } else {
+    const record = new FavoriteSong(data);
+    await record.save();
+    status = "add";
+  }
+
+  res.json({
+    code: 200,
+    status: status
+  });
+};
