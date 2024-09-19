@@ -111,7 +111,7 @@ export const like = async (req: Request, res: Response) => {
 }
 
 // [PATCH] /songs/favorite
-export const favorite = async (req: Request, res: Response) => {
+export const favoritePatch = async (req: Request, res: Response) => {
   try{
     const { id } = req.body;
 
@@ -140,3 +140,27 @@ export const favorite = async (req: Request, res: Response) => {
     res.redirect("back");
   }
 };
+
+// [GET] /songs/favorite
+export const favorite = async (req: Request, res: Response) => {
+  try{
+    const songs = await FavoriteSong.find({});
+    for(let song of songs){
+      const infoSong = await Song.findOne({
+        _id: song.songId
+      });
+      const infoSinger = await Singer.findOne({
+        _id: infoSong.singerId
+      });
+      song["infoSong"] = infoSong;
+      song["infoSinger"] = infoSinger;
+    }
+  
+    res.render("client/pages/songs/favorite.pug", {
+      pageTitle: "Trang bài hát yêu thích",
+      songs: songs
+    })
+  } catch(e){
+    res.redirect("back");
+  }
+}
