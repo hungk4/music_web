@@ -11,6 +11,11 @@ connectDatabase();
 const app: Express = express();
 const port: number | string = process.env.PORT || 3000;
 
+// cookie-parser
+import cookieParser from "cookie-parser";
+app.use(cookieParser());
+// end cookie-parser
+
 // Flash
 import session from 'express-session';
 import flash from 'express-flash';

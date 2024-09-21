@@ -4,7 +4,12 @@ import  { songRoute }  from "./song.route";
 import  { userRoute }  from "./user.route";
 import  { homeRoute }  from "./home.route";
 
+import {infoUser} from "../../middlewares/client/user.middleware";
+
 export const routesClient = (app: Express) => {
+
+  app.use(infoUser);
+
   app.use("/", homeRoute);
 
   app.use("/topics", topicRoute);
