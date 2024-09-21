@@ -166,43 +166,67 @@ export const favorite = async (req: Request, res: Response) => {
 }
 
 
-// [GET] /songs/search
+// [GET] /songs/:type
 export const search = async (req: Request, res: Response) => {
-  const keyword = `${req.query.keyword}`;
-  let songs = [];
-  if(keyword) {
-    let keywordSlug = keyword.trim(); // bỏ các khoảng trằng ở đầu và cuối
-    keywordSlug = keywordSlug.replace(/\s/g, "-"); // thay thế khoảng trằng bằng dấu gạch ngang (\s = space); cờ g tìm kiếm và thay thế tất cả
-    keywordSlug = keywordSlug.replace(/-+/g, "-"); // Thay thế nhiều dấu gạch ngang liên tiếp bằng một dấu gạch ngang
+  try{
+    const type = req.params.type;
 
-    keywordSlug = unidecode(keywordSlug);
+    const keyword = `${req.query.keyword}`;
+    let songsFinal = [];
 
-    console.log(keyword);
-    console.log(keywordSlug);
-
-    const regexKeyword = new RegExp(keyword, "i");
-    const regexKeywordSlug = new RegExp(keywordSlug, "i");
-
-    songs = await Song.find({
-      $or: [
-        { title: regexKeyword}, 
-        { slug: regexKeywordSlug}
-      ],
-      deleted: false,
-      status: "active"
-    }).select("title avatar singerId like slug");
+    if(keyword) {
+      let keywordSlug = keyword.trim(); // bỏ các khoảng trằng ở đầu và cuối
+      keywordSlug = keywordSlug.replace(/\s/g, "-"); // thay thế khoảng trằng bằng dấu gạch ngang (\s = space); cờ g tìm kiếm và thay thế tất cả
+      keywordSlug = keywordSlug.replace(/-+/g, "-"); // Thay thế nhiều dấu gạch ngang liên tiếp bằng một dấu gạch ngang
+      keywordSlug = unidecode(keywordSlug);
   
-    for (const item of songs) {
-      const singerInfo = await Singer.findOne({
-        _id: item.singerId
-      }).select("fullName");
+      const regexKeyword = new RegExp(keyword, "i");
+      const regexKeywordSlug = new RegExp(keywordSlug, "i");
   
-      item["singerFullName"] = singerInfo["fullName"];
+      const songs = await Song.find({
+        $or: [
+          { title: regexKeyword}, 
+          { slug: regexKeywordSlug}
+        ],
+        deleted: false,
+        status: "active"
+      }).select("title avatar singerId like slug");
+    
+      for (const item of songs) {
+        const singerInfo = await Singer.findOne({
+          _id: item.singerId
+        }).select("fullName");
+    
+        const itemFinal = {
+          title: item.title,
+          avatar: item.avatar,
+          singerId: item.singerId,
+          like: item.like,
+          slug: item.slug,
+          singerFullName: singerInfo["fullName"],
+        };
+
+        songsFinal.push(itemFinal);
+      }
     }
+
+    if(type == "result"){
+      res.render("client/pages/songs/list", {
+        pageTitle: "Kết quả tìm kiếm: " + keyword,
+        keyword: keyword,
+        songs: songsFinal
+      });
+    } else if(type == "suggest") {
+      res.json({
+        code: 200,
+        songs: songsFinal
+      })
+    } else {
+        res.json({
+          code: 400
+        })
+      }
+  }catch(e){
+    res.redirect("back");
   }
-  res.render("client/pages/songs/list", {
-    pageTitle: "Kết quả tìm kiếm: " + keyword,
-    keyword: keyword,
-    songs: songs
-  });
 };

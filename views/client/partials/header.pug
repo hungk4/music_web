@@ -9,7 +9,7 @@ header.header
       .col-5
         .box-search
           form(
-            action="/songs/search"
+            action="/songs/search/result"
             method="GET"
           )
             div(class="form-group d-flex mb-0")
@@ -24,8 +24,16 @@ header.header
                 type="submit"
                 class="btn btn-primary"
               ) Tìm
-      
-
+          .inner-suggest
+            .inner-list
+              //- a(href=`/songs/detail/:slugSong` class="inner-item")
+              //-   .inner-image
+              //-     img(src="https://backend.daca.vn/assets/images/cat-doi-noi-sau.jpg")
+              //-   .inner-info
+              //-     .inner-title Cắt đôi nỗi sầu
+              //-     .inner-singer
+              //-       <i class="fa-solid fa-microphone-lines"></i> Tăng Duy Tân
+  
       .col-4
         .inner-menu
           ul
