@@ -45,11 +45,51 @@ export const registerPost = async (req: Request, res: Response) => {
     
     const user = new User(data);
     await user.save();
-    
-    res.cookie("token", user.token);
+
+    const expiresIn = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // / Cookie expires in 30 days;
+    res.cookie("token", user.token, {expires: expiresIn});
+
     req.flash("success", "Đăng kí tài khoản thành công");
-    res.redirect("/topics");
+    res.redirect("/");
   } catch(e){
     res.redirect("back");
   }
 }
+
+
+// [POST] /user/loginPost
+export const loginPost = async (req: Request, res: Response) => {
+  try{
+    const {email, password} = req.body;
+    const user = await User.findOne({
+      email: email,
+      deleted: false
+    });
+    if(!user){
+      req.flash("error", "Không tồn tại email trong hệ thống");
+      res.redirect("back");
+      return;
+    }
+    if(md5(password) !== user.password){
+      req.flash("error", "Sai mật khẩu");
+      res.redirect("back");
+      return;
+    }
+  
+    const expiresIn = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // / Cookie expires in 30 days;
+    res.cookie("token", user.token, {expires: expiresIn});
+  
+    req.flash("success", "Đăng nhập thành công");
+    res.redirect("/");
+  } catch(e){
+    res.redirect("/");
+  }
+} 
+
+
+// [POST] /user/logout
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.redirect("/");
+} 
+
