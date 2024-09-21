@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import unidecode from "unidecode";
 import Topic from "../../models/topic.model";
 import Song from "../../models/song.model";
 import Singer from "../../models/singer.model";
-import exp from "constants";
 import FavoriteSong from "../../models/favorite-song.model";
 
 // [GET] /songs/:slugTopic
@@ -171,10 +171,23 @@ export const search = async (req: Request, res: Response) => {
   const keyword = `${req.query.keyword}`;
   let songs = [];
   if(keyword) {
-    const regex = new RegExp(keyword, "i");
-    console.log(regex);
+    let keywordSlug = keyword.trim(); // bỏ các khoảng trằng ở đầu và cuối
+    keywordSlug = keywordSlug.replace(/\s/g, "-"); // thay thế khoảng trằng bằng dấu gạch ngang (\s = space); cờ g tìm kiếm và thay thế tất cả
+    keywordSlug = keywordSlug.replace(/-+/g, "-"); // Thay thế nhiều dấu gạch ngang liên tiếp bằng một dấu gạch ngang
+
+    keywordSlug = unidecode(keywordSlug);
+
+    console.log(keyword);
+    console.log(keywordSlug);
+
+    const regexKeyword = new RegExp(keyword, "i");
+    const regexKeywordSlug = new RegExp(keywordSlug, "i");
+
     songs = await Song.find({
-      title: regex,
+      $or: [
+        { title: regexKeyword}, 
+        { slug: regexKeywordSlug}
+      ],
       deleted: false,
       status: "active"
     }).select("title avatar singerId like slug");
