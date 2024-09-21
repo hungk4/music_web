@@ -236,3 +236,29 @@ export const search = async (req: Request, res: Response) => {
     res.redirect("back");
   }
 };
+
+// [GET] /songs/listen/:id
+export const listen = async (req: Request, res: Response) => {
+  try{
+    const id = req.params.id;
+    const song = await Song.findOne({
+      _id: id,
+      status: "active",
+      deleted: false
+    });
+    const updateListen = song.listen + 1;
+    await Song.updateOne({
+      _id: id,
+      status: "active",
+      deleted: false
+    }, {
+      listen: updateListen
+    });
+    res.json({
+      code: 200,
+      listen: updateListen
+    });
+  }catch(e){
+    res.redirect("back");
+  }
+};

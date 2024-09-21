@@ -21,16 +21,28 @@ if(aplayer) {
   });
 
   const avatar = document.querySelector(".singer-detail .inner-avatar");
-  const avatar2 = document.querySelector(".aplayer .aplayer-pic");
+  // const avatar2 = document.querySelector(".aplayer .aplayer-pic");
 
   ap.on('play', function () {
     avatar.style.animationPlayState = "running";
-    avatar2.style.animationPlayState = "running";
+    // avatar2.style.animationPlayState = "running";
+    setTimeout(() => {
+      ap.on('ended', function () {
+        fetch(`/songs/listen/${dataSong._id}`)
+          .then(res => res.json())
+          .then(data => {
+            if(data.code == 200) {
+              const innerNumberListen = document.querySelector(".singer-detail .inner-listen .inner-number");
+              innerNumberListen.innerHTML = data.listen;
+            }
+          })
+      });
+    }, 3000);
   });
 
   ap.on('pause', function () {
     avatar.style.animationPlayState = "paused";
-    avatar2.style.animationPlayState = "paused";
+    // avatar2.style.animationPlayState = "paused";
   });
 }
 // End APlayer
