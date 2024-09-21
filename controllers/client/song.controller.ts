@@ -171,6 +171,8 @@ export const search = async (req: Request, res: Response) => {
   const keyword = `${req.query.keyword}`;
   let songs = [];
   if(keyword) {
+    const regex = new RegExp(keyword, "i");
+    console.log(regex);
     songs = await Song.find({
       title: regex,
       deleted: false,
