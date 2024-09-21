@@ -116,7 +116,7 @@ export const favoritePatch = async (req: Request, res: Response) => {
     const { id } = req.body;
 
     const data = {
-      // userId: res.locals.user.id,
+      userId: res.locals.user.id,
       songId: id
     };
   
@@ -144,16 +144,21 @@ export const favoritePatch = async (req: Request, res: Response) => {
 // [GET] /songs/favorite
 export const favorite = async (req: Request, res: Response) => {
   try{
-    const songs = await FavoriteSong.find({});
-    for(let song of songs){
-      const infoSong = await Song.findOne({
-        _id: song.songId
+    let songs = [];
+    if(res.locals.user){
+      songs = await FavoriteSong.find({
+        userId: res.locals.user.id
       });
-      const infoSinger = await Singer.findOne({
-        _id: infoSong.singerId
-      });
-      song["infoSong"] = infoSong;
-      song["infoSinger"] = infoSinger;
+      for(let song of songs){
+        const infoSong = await Song.findOne({
+          _id: song.songId
+        });
+        const infoSinger = await Singer.findOne({
+          _id: infoSong.singerId
+        });
+        song["infoSong"] = infoSong;
+        song["infoSinger"] = infoSinger;
+      }
     }
   
     res.render("client/pages/songs/favorite.pug", {
@@ -161,6 +166,7 @@ export const favorite = async (req: Request, res: Response) => {
       songs: songs
     })
   } catch(e){
+    console.log(e);
     res.redirect("back");
   }
 }
