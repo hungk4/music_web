@@ -38,8 +38,9 @@ app.set('views', './views')
 app.set('view engine', 'pug');
 
 import {routesClient} from "./routes/client/index.route";
-import exp from "constants";
+import {routesAdmin} from "./routes/admin/index.route";
 routesClient(app);
+routesAdmin(app);
 
 
 app.listen(port, () => {
