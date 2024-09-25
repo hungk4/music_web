@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import { systemConfig } from "./config/system";
+import path from "path";
 
 dotenv.config();
 
@@ -35,10 +36,14 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-app.set('views', './views')
+
+app.set('views', `${__dirname}/views`)
 app.set('view engine', 'pug');
 
+
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 import {routesClient} from "./routes/client/index.route";
 import {routesAdmin} from "./routes/admin/index.route";
