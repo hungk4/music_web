@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
+import { systemConfig } from "./config/system";
 
 dotenv.config();
 
@@ -36,6 +37,8 @@ app.use(express.static("public"));
 
 app.set('views', './views')
 app.set('view engine', 'pug');
+
+app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
 import {routesClient} from "./routes/client/index.route";
 import {routesAdmin} from "./routes/admin/index.route";
