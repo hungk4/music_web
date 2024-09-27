@@ -12,3 +12,21 @@ export const uploadSingle = (req: Request, res: Response, next: NextFunction) =>
     next();
   }
 }
+
+export const uploadFields = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    for (const key in req["files"]) {
+      req.body[key] = [];
+  
+      const array = req["files"][key];
+      for (const item of array) {
+        const result = await streamUpload(item.buffer);
+        req.body[key].push(result["url"]);
+      }
+    }
+  
+    next();
+  } catch (error) {
+    console.log(error);
+  }
+}
