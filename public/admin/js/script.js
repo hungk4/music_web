@@ -10,3 +10,21 @@ if(uploadImageInput){
   })
 }
 // end preview upload image
+
+// preview upload image
+const uploadAudio = document.querySelector("[upload-audio]");
+console.log(uploadAudio);
+if(uploadAudio){
+  const uploadAudioInput = document.querySelector("[upload-audio-input]");
+  const uploadAudioPlay = uploadAudio.querySelector("[upload-audio-play]");
+  const source = uploadAudioPlay.querySelector("source");
+
+  uploadAudioInput.addEventListener("change", (event) => {
+    const file = uploadAudioInput.files[0];
+    if(file) {
+      source.src = URL.createObjectURL(file);
+      uploadAudioPlay.load();
+    }
+  })
+}
+// end preview upload image
