@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import { systemConfig } from "./config/system";
 import path from "path";
+import methodOverride from "method-override";
 
 dotenv.config();
 
@@ -17,6 +18,9 @@ const port: number | string = process.env.PORT || 3000;
 import cookieParser from "cookie-parser";
 app.use(cookieParser());
 // end cookie-parser
+
+// method-override
+app.use(methodOverride('_method'));
 
 // Flash
 import session from 'express-session';
