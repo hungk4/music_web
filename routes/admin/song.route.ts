@@ -9,6 +9,8 @@ import * as uploadCoud from "../../middlewares/admin/uploadCloud.middelware";
 
 router.get("/", controller.index);
 
+router.get("/detail/:songId", controller.detail);
+
 router.get("/create", controller.create);
 
 router.post(

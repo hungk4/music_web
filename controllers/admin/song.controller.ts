@@ -16,6 +16,37 @@ export const index = async (req: Request, res: Response) => {
   });
 };
 
+// [GET] /admin/songs/detail/:songId
+export const detail = async (req: Request, res: Response) => {
+  try{
+    const id = req.params.songId;
+ 
+    const song = await Song.findOne({
+      _id: id,
+      deleted: false
+    });
+    const topic = await Topic.findOne({
+      _id: song.topicId,
+      deleted: false
+    }).select("title");
+    
+    const singer = await Singer.findOne({
+      _id: song.singerId,
+      deleted: false
+    }).select("fullName");
+
+    res.render("admin/pages/songs/detail.pug", {
+      pageTitle: "Chi tiết bài hát",
+      song: song,
+      topic: topic,
+      singer: singer
+    });
+
+  } catch(e){
+    res.redirect("back");
+  }
+};
+
 // [GET] /admin/songs/create
 export const create = async (req: Request, res: Response) => {
   const topics = await Topic.find({

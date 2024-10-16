@@ -1,0 +1,66 @@
+extends ../../layouts/default.pug
+block main
+  h1(class="mb-4") #{pageTitle}
+
+  div(class="form-group") 
+    b Tiêu đề:  
+    | #{song.title}
+
+  div(class="form-group") 
+    b Chủ đề: 
+    | #{topic.title}
+  div(class="form-group") 
+    b Ca sĩ: 
+    | #{singer.fullName}
+  div(
+    class="form-group"
+    upload-image
+  ) 
+    b Hình ảnh: 
+    img(
+      src=song.avatar
+      class="image-preview"
+    )
+  div(
+    class="form-group"
+    upload-audio
+  ) 
+    b File âm thanh:
+  audio(controls upload-audio-play)
+    source(src=song.audio)
+  div(class="form-group")
+      b Lời bài hát:
+      |!{song.lyrics}
+
+
+  div(class="form-group")
+    label(for="desc")  
+      b Mô tả:
+    textarea(
+      type="text"
+      class="form-control"
+      id="desc"
+      name="description"
+      rows="5"
+      textarea-mce
+    ) #{song.description}
+  div(class="form-group form-check form-check-inline")
+    input(
+      type="radio"
+      class="form-check-input"
+      id="statusActive"
+      name="status"
+      value="active"
+      checked=(song.status == "active" ? true : false)
+    )
+    label(for="statusActive" class="form-check-label") Hoạt động
+  div(class="form-group form-check form-check-inline")
+    input(
+      type="radio"
+      class="form-check-input"
+      id="statusInActive"
+      name="status"
+      value="inactive"
+      checked=(song.status == "inactive" ? true : false)
+    )
+    label(for="statusInActive" class="form-check-label") Dừng hoạt động
